@@ -41,7 +41,7 @@ Also read how to do inspect on your Operating system.
 5. On Inspect Element or Developer Tools > go to Storage / Application tab
 6. find `Session Storage`
 7. look at `tgWebAppData` copy value, example `user=xxx` or `query_id=xxx`
-   ![image](https://github.com/Widiskel/blum-bot/blob/master/assets/ss1.png)
+   ![image](https://github.com/Widiskel/blum-bot/blob/master/assets/ss.png)
 8. Now open `account.js` and fill up or paste your data like template data provided
 
 ```js
