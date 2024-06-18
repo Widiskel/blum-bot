@@ -1,6 +1,6 @@
 # BLUM BOT
 
-Blum ? Blum is telegram web app mining on telegram, and blum bot is blum auto mining bot
+Blum ? Blum is telegram web app mining on telegram, and blum bot is blum auto mining and complete missions bot
 
 ## Prerequisite
 
