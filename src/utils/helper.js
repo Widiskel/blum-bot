@@ -1,7 +1,13 @@
-// import moment from "moment";
-import moment from "moment-timezone";
+import { URL } from "url";
+import moment from "moment";
+import momentTz from "moment-timezone";
 
 export class Helper {
+  /**
+   * Give random user agent
+   *
+   * @returns {string} random user agent
+   */
   static randomUserAgent() {
     const list_useragent = [
       "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/125.0.6422.80 Mobile/15E148 Safari/604.1",
@@ -14,13 +20,47 @@ export class Helper {
     return list_useragent[Math.floor(Math.random() * list_useragent.length)];
   }
 
+  /**
+   * Checks given timestamp.
+   *
+   * @param {number} milliseconds - The timestamp in milliseconds.
+   */
   static readTime(milliseconds) {
-    const date = moment.unix(milliseconds);
+    const date = moment(milliseconds);
     return date.format("YYYY-MM-DD HH:mm:ss");
   }
 
   static getCurrentTimestamp() {
-    const timestamp = moment().tz("Asia/Singapore").unix();
+    const timestamp = momentTz().tz("Asia/Jakarta").unix();
     return timestamp.toString();
+  }
+
+  /**
+   * Checks if the given timestamp in milliseconds is before than the current time.
+   *
+   * @param {number} milliseconds - The timestamp in milliseconds.
+   * @returns {boolean} True if the timestamp is before than the current time, false otherwise.
+   */
+  static isFutureTime(milliseconds) {
+    const now = moment.tz(moment(), "Asia/Jakarta");
+    const givenTime = moment.tz(milliseconds, "Asia/Jakarta");
+
+    return givenTime.isBefore(now);
+  }
+
+  /**
+   * Extracts the domain from a given URL.
+   *
+   * @param {string} urlString - The URL from which to extract the domain.
+   * @returns {string} The domain of the URL.
+   */
+  static getDomain(urlString) {
+    try {
+      const url = new URL(urlString);
+      return url.hostname;
+    } catch (error) {
+      console.error("Invalid URL:", error);
+      return null;
+    }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "bot",
+  "name": "blum-bot",
   "version": "1.0.0",
   "type": "module",
   "description": "BOT",
@@ -9,13 +9,16 @@
     "test": "node test.js"
   },
   "keywords": [
-    "bot"
+    "bot",
+    "blum",
+    "blum-mining"
   ],
   "author": "Widiskel",
   "license": "ISC",
   "dependencies": {
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
+    "twisters": "^1.1.0",
     "winston": "^3.13.0"
   }
 }
