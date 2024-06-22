@@ -55,7 +55,15 @@ export class API {
 
       logger.info(`Response : ${res.status} ${res.statusText}`);
       if (res.ok) {
-        const data = await res.json();
+        const contentType = res.headers.get("content-type");
+        let data;
+
+        if (contentType && contentType.includes("application/json")) {
+          data = await res.json();
+        } else {
+          data = await res.text();
+        }
+
         logger.info(`Response Data : ${JSON.stringify(data)}`);
         return data;
       } else {
