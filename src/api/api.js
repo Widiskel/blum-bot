@@ -6,18 +6,17 @@ export class API {
 
   generateHeaders(token, url) {
     const headers = {
-      Accept: "application/json, text/plain, */*",
-      "Accept-Encoding": "gzip, deflate, br, zstd",
-      "Accept-Language": "en-US,en;q=0.9,id;q=0.8",
-      "Content-Type": "application/json",
-      Priority: "u=1, i",
-      Referer: `${Helper.getDomain(url)}`,
-      Origin: `https://telegram.blum.codes'`,
-      "User-Agent": Helper.randomUserAgent(),
-      "Sec-Fetch-Dest": "empty",
-      "Sec-Fetch-Mode": "cors",
-      "Sec-Fetch-Site": "same-site",
-      Connection: "keep-alive",
+      accept: "application/json, text/plain, */*",
+      "user-agent": Helper.randomUserAgent(),
+      "content-type": "application/json",
+      origin: "https://telegram.blum.codes",
+      "x-requested-with": "org.telegram.messenger",
+      "sec-fetch-site": "same-site",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-dest": "empty",
+      referer: "https://telegram.blum.codes/",
+      "accept-encoding": "gzip, deflate",
+      "accept-language": "en,en-US;q=0.9",
     };
     if (this.token) {
       headers.Authorization = `Bearer ${token}`;

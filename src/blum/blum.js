@@ -1,4 +1,5 @@
 import { API } from "../api/api.js";
+import { Helper } from "../utils/helper.js";
 
 export class Blum extends API {
   constructor(account) {
@@ -116,25 +117,7 @@ export class Blum extends API {
         });
     });
   }
-  async startAndCompleteTask(taskId) {
-    return new Promise(async (resolve, reject) => {
-      await this.fetch(
-        "https://game-domain.blum.codes/api/v1/tasks/" + taskId,
-        "POST",
-        this.token
-      )
-        .then((data) => {
-          if (data.status == "STARTED") {
-            resolve();
-          } else {
-            resolve();
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
+
   async startAndCompleteTask(taskId) {
     return new Promise(async (resolve, reject) => {
       await this.fetch(
@@ -207,7 +190,8 @@ export class Blum extends API {
       )
         .then(async (data) => {
           console.log(data);
-          console.log(`-> Play Game`);
+          console.log(`-> Play Game for 30 Second`);
+          await Helper.delay(30000);
           await this.claimGame(
             data.gameId,
             Math.floor(Math.random() * (500 - 300 + 1)) + 300
@@ -232,6 +216,7 @@ export class Blum extends API {
         }
       )
         .then((data) => {
+          console.log(data);
           this.balance.playPasses -= 1;
           resolve();
         })

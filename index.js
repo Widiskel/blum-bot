@@ -3,10 +3,6 @@ import { Blum } from "./src/blum/blum.js";
 import { Helper } from "./src/utils/helper.js";
 import logger from "./src/utils/logger.js";
 
-async function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function startBot() {
   try {
     for (const acc of account) {
@@ -93,11 +89,17 @@ async function startBot() {
           }
         }
 
-        // if (blum.balance.playPasses > 0) {
-        //   for (let play = 0; play < blum.balance.playPasses; play++) {
-        //     await blum.play();
-        //   }
-        // }
+        if (blum.balance.playPasses > 0) {
+          for (let play = 0; play < blum.balance.playPasses; play++) {
+            var err = false;
+            await blum.play().catch(() => {
+              err = true;
+            });
+            if (err) {
+              break;
+            }
+          }
+        }
         console.log("Account Processing done, continue using next account");
         console.log(
           `===========================================================`
@@ -113,7 +115,7 @@ async function startBot() {
     }
 
     console.log("-> All Account processed, delaying for 10 minute");
-    await delay(60000 * 10);
+    await Helper.delay(60000 * 10);
     await startBot();
   } catch (error) {
     console.error("Error :", error);
