@@ -53,7 +53,7 @@ export class API {
       const res = await fetch(url, options);
 
       logger.info(`Response : ${res.status} ${res.statusText}`);
-      if (res.ok) {
+      if (res.ok || res.status == 412) {
         const contentType = res.headers.get("content-type");
         let data;
 

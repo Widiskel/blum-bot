@@ -1,6 +1,8 @@
 import { URL } from "url";
 import moment from "moment";
 import momentTz from "moment-timezone";
+import fs from "fs";
+import path from "path";
 
 export class Helper {
   /**
@@ -66,5 +68,128 @@ export class Helper {
 
   static async delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  static getSession(sessionName) {
+    try {
+      const sessionsPath = "sessions";
+      if (!fs.existsSync(sessionsPath)) {
+        fs.mkdirSync(sessionsPath);
+      }
+      const files = fs.readdirSync(path.resolve(sessionName));
+      const session = [];
+      files.forEach((file) => {
+        session.push(file);
+      });
+      return session;
+    } catch (error) {
+      throw Error(`Error reading sessions directory: ${error},`);
+    }
+  }
+
+  static resetSession(sessionName) {
+    try {
+      const files = fs.readdirSync(path.resolve(sessionName));
+      console.log("Deleting Sessions...");
+      files.forEach((file) => {
+        fs.rm(
+          `${path.join(path.resolve("sessions"), file)}`,
+          { recursive: true },
+          (err) => {
+            if (err) throw err;
+          }
+        );
+      });
+      console.info("Sessions reset successfully");
+    } catch (error) {
+      throw Error(`Error deleting session files: ${error},`);
+    }
+  }
+
+  static createDir(dirName) {
+    try {
+      const sessionsPath = "sessions";
+      if (!fs.existsSync(sessionsPath)) {
+        fs.mkdirSync(sessionsPath);
+      }
+
+      const dirPath = path.join(sessionsPath, dirName);
+
+      fs.mkdirSync(dirPath, { recursive: true });
+
+      console.log(dirPath);
+      return dirPath;
+    } catch (error) {
+      throw new Error(`Error creating directory: ${error}`);
+    }
+  }
+
+  static getTelegramQuery(url, type) {
+    const hashIndex = url.indexOf("#");
+    if (hashIndex === -1) {
+      throw new Error("No query string found in the URL.");
+    }
+
+    const queryString = url.substring(hashIndex + 1);
+    const decodedQueryString = queryString.split("&");
+    const param = decodedQueryString[0]
+      .split("&")[0]
+      .replace("tgWebAppData=", "");
+
+    if (!param) {
+      throw new Error("Param not found in the query string.");
+    }
+
+    if (type == "1") {
+      return param;
+    } else if (type == "2") {
+      return this.decodeQueryString(param);
+    } else {
+      const newParam = this.decodeQueryString(param);
+      return this.jsonToInitParam(newParam);
+    }
+  }
+
+  static jsonToInitParam(dataString) {
+    const newData = parse(dataString);
+
+    if (newData.user) {
+      const userObject = JSON.parse(newData.user);
+      newData.user = encodeURIComponent(JSON.stringify(userObject));
+    }
+
+    const resultArray = [];
+    for (const [key, value] of Object.entries(newData)) {
+      resultArray.push(`${key}=${value}`);
+    }
+    const result = resultArray.join("&");
+
+    return result;
+  }
+
+  static decodeQueryString(encodedString) {
+    const decodedString = decodeURIComponent(encodedString);
+    const paramsArray = decodedString.split("&");
+    const paramsObject = {};
+
+    paramsArray.forEach((param) => {
+      const [key, value] = param.split("=");
+      if (key === "user") {
+        paramsObject[key] = JSON.parse(decodeURIComponent(value));
+      } else {
+        paramsObject[key] = value;
+      }
+    });
+
+    const resultArray = [];
+    for (const [key, value] of Object.entries(paramsObject)) {
+      if (key === "user") {
+        resultArray.push(`${key}=${JSON.stringify(value)}`);
+      } else {
+        resultArray.push(`${key}=${value}`);
+      }
+    }
+
+    return resultArray.join("&");
   }
 }

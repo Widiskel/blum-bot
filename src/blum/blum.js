@@ -189,7 +189,7 @@ export class Blum extends API {
         this.token
       )
         .then(async (data) => {
-          console.log(data);
+          console.log(`-> Game Id ${data.gameId}`);
           console.log(`-> Play Game for 30 Second`);
           await Helper.delay(30000);
           await this.claimGame(
