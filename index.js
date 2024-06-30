@@ -104,10 +104,15 @@ async function operation(acc) {
     throw error;
   }
 }
+
+let init = false;
 async function startBot() {
   try {
     const tele = await new Telegram();
-    await tele.init();
+    if(init = false){    
+      await tele.init();
+      init = true;
+    }
 
     const sessionList = Helper.getSession("sessions");
     for (const ses of sessionList) {
