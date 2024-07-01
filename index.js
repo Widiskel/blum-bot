@@ -109,7 +109,7 @@ let init = false;
 async function startBot() {
   try {
     const tele = await new Telegram();
-    if(init = false){    
+    if(init == false){    
       await tele.init();
       init = true;
     }
