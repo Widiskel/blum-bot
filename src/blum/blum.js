@@ -189,13 +189,17 @@ export class Blum extends API {
         this.token
       )
         .then(async (data) => {
+          const max=2000;
+          const min=500;
           console.log(`-> Game Id ${data.gameId}`);
           console.log(`-> Play Game for 30 Second`);
           await Helper.delay(30000);
           await this.claimGame(
             data.gameId,
-            Math.floor(Math.random() * (500 - 300 + 1)) + 300
+            Math.floor(Math.random() * (max - min + 1)) + min
           );
+          console.log(`Delaying for 5 Second `);
+          await Helper.delay(5000);
           resolve();
         })
         .catch((err) => {
