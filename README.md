@@ -15,6 +15,7 @@ Blum ? Blum is telegram web app mining on telegram, and blum bot is blum auto mi
 - Auto start and claim mining
 - Auto complete missions
 - Auto claim misisons reward
+- Auto play game
 
 ## Register Blum Account
 
