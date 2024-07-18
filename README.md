@@ -6,7 +6,7 @@ Blum ? Blum is telegram web app mining on telegram, and blum bot is blum auto mi
 
 - Node JS (v22.1.0)
 - Git
-- Blum Account [Register HERE](t.me/BlumCryptoBot/app?startapp=ref_dvQqzUMseK)
+- Blum Account ["Register HERE"](t.me/BlumCryptoBot/app?startapp=ref_dvQqzUMseK)
 - TELEGRAM_APP_ID & TELEGRAM_APP_HASH Get it from [Here](https://my.telegram.org/auth?to=apps)
 
 ## BOT Feature
