@@ -4,3 +4,4 @@ log/app.log
 test.js
 src/config/config.js
 sessions/*
+.DS_Store
