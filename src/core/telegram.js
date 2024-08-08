@@ -62,10 +62,10 @@ export class Telegram {
 
       const newSession = await input.text(ctx);
       this.sessionName = Helper.createDir(newSession);
-      await this.useSession(this.sessionName);
+      await this.useSession("sessions/" + newSession);
       await this.disconnect();
-      logger.info(`Session ${this.sessionName} - Created`);
-      console.log(`Session ${this.sessionName} - Created`);
+      logger.info(`Session ${newSession} - Created`);
+      console.log(`Session ${newSession} - Created`);
       this.storeSession.save();
       await Helper.delay(2000);
       await this.init();

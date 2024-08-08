@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-
+import fs from "fs";
 const { combine, timestamp, printf, colorize } = format;
 
 const customFormat = printf(({ level, message, timestamp }) => {
@@ -41,6 +41,16 @@ class Logger {
 
   setLevel(level) {
     this.logger.level = level;
+  }
+
+  clear() {
+    fs.truncate("log/app.log", 0, (err) => {
+      if (err) {
+        this.logger.error("Failed to clear the log file: " + err.message);
+      } else {
+        this.logger.info("Log file cleared");
+      }
+    });
   }
 }
 

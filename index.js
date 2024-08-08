@@ -4,6 +4,7 @@ import { Helper } from "./src/utils/helper.js";
 import logger from "./src/utils/logger.js";
 
 async function operation(acc) {
+  logger.clear();
   try {
     const blum = new Blum(acc);
 
@@ -21,44 +22,44 @@ async function operation(acc) {
 
     console.log(`Balance      : ${blum.balance.availableBalance}`);
     console.log(`Play Pases   : ${blum.balance.playPasses}`);
-    // if (blum.balance.farming) {
-    //   console.log(
-    //     `Farming      : ${Helper.readTime(
-    //       blum.balance.farming.startTime
-    //     )} - ${Helper.readTime(blum.balance.farming.endTime)} Rate: ${
-    //       blum.balance.farming.earningsRate
-    //     } Balance : ${blum.balance.farming.balance}  ${
-    //       Helper.isFutureTime(blum.balance.farming.endTime)
-    //         ? "(Claimable)"
-    //         : "(Unclaimable)"
-    //     }`
-    //   );
-    //   console.log();
-    //   if (Helper.isFutureTime(blum.balance.farming.endTime)) {
-    //     await blum
-    //       .claim()
-    //       .then(() => {
-    //         console.log("-> Mining Claimed Successfully");
-    //       })
-    //       .catch((err) => {
-    //         console.error("Error during claim:", err.message);
-    //         logger.info(`Application Error : ${err}`);
-    //         throw err;
-    //       });
-    //   }
-    // }
-    // await blum
-    //   .mining()
-    //   .then(() => {
-    //     console.log("-> Mining Started Successfully");
-    //   })
-    //   .catch((err) => {
-    //     console.error("Error during mining:", err.message);
-    //     logger.info(`Application Error : ${err}`);
-    //     throw err;
-    //   });
+    if (blum.balance.farming) {
+      console.log(
+        `Farming      : ${Helper.readTime(
+          blum.balance.farming.startTime
+        )} - ${Helper.readTime(blum.balance.farming.endTime)} Rate: ${
+          blum.balance.farming.earningsRate
+        } Balance : ${blum.balance.farming.balance}  ${
+          Helper.isFutureTime(blum.balance.farming.endTime)
+            ? "(Claimable)"
+            : "(Unclaimable)"
+        }`
+      );
+      console.log();
+      if (Helper.isFutureTime(blum.balance.farming.endTime)) {
+        await blum
+          .claim()
+          .then(() => {
+            console.log("-> Mining Claimed Successfully");
+          })
+          .catch((err) => {
+            console.error("Error during claim:", err.message);
+            logger.info(`Application Error : ${err}`);
+            throw err;
+          });
+      }
+    }
+    await blum
+      .mining()
+      .then(() => {
+        console.log("-> Mining Started Successfully");
+      })
+      .catch((err) => {
+        console.error("Error during mining:", err.message);
+        logger.info(`Application Error : ${err}`);
+        throw err;
+      });
 
-    // console.log();
+    console.log();
 
     await blum.getTasks();
 
@@ -146,7 +147,6 @@ async function startBot() {
         });
 
       await tele.disconnect().then(async () => {
-        console.log();
         await Helper.delay(1000);
       });
 
