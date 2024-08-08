@@ -109,7 +109,10 @@ export class Blum extends API {
         this.token
       )
         .then((data) => {
-          this.tasks = data;
+          this.tasks = [];
+          for (const item of data) {
+            this.tasks.push(...item.tasks);
+          }
           resolve();
         })
         .catch((err) => {

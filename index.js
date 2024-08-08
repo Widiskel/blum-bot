@@ -21,44 +21,44 @@ async function operation(acc) {
 
     console.log(`Balance      : ${blum.balance.availableBalance}`);
     console.log(`Play Pases   : ${blum.balance.playPasses}`);
-    if (blum.balance.farming) {
-      console.log(
-        `Farming      : ${Helper.readTime(
-          blum.balance.farming.startTime
-        )} - ${Helper.readTime(blum.balance.farming.endTime)} Rate: ${
-          blum.balance.farming.earningsRate
-        } Balance : ${blum.balance.farming.balance}  ${
-          Helper.isFutureTime(blum.balance.farming.endTime)
-            ? "(Claimable)"
-            : "(Unclaimable)"
-        }`
-      );
-      console.log();
-      if (Helper.isFutureTime(blum.balance.farming.endTime)) {
-        await blum
-          .claim()
-          .then(() => {
-            console.log("-> Mining Claimed Successfully");
-          })
-          .catch((err) => {
-            console.error("Error during claim:", err.message);
-            logger.info(`Application Error : ${err}`);
-            throw err;
-          });
-      }
-    }
-    await blum
-      .mining()
-      .then(() => {
-        console.log("-> Mining Started Successfully");
-      })
-      .catch((err) => {
-        console.error("Error during mining:", err.message);
-        logger.info(`Application Error : ${err}`);
-        throw err;
-      });
+    // if (blum.balance.farming) {
+    //   console.log(
+    //     `Farming      : ${Helper.readTime(
+    //       blum.balance.farming.startTime
+    //     )} - ${Helper.readTime(blum.balance.farming.endTime)} Rate: ${
+    //       blum.balance.farming.earningsRate
+    //     } Balance : ${blum.balance.farming.balance}  ${
+    //       Helper.isFutureTime(blum.balance.farming.endTime)
+    //         ? "(Claimable)"
+    //         : "(Unclaimable)"
+    //     }`
+    //   );
+    //   console.log();
+    //   if (Helper.isFutureTime(blum.balance.farming.endTime)) {
+    //     await blum
+    //       .claim()
+    //       .then(() => {
+    //         console.log("-> Mining Claimed Successfully");
+    //       })
+    //       .catch((err) => {
+    //         console.error("Error during claim:", err.message);
+    //         logger.info(`Application Error : ${err}`);
+    //         throw err;
+    //       });
+    //   }
+    // }
+    // await blum
+    //   .mining()
+    //   .then(() => {
+    //     console.log("-> Mining Started Successfully");
+    //   })
+    //   .catch((err) => {
+    //     console.error("Error during mining:", err.message);
+    //     logger.info(`Application Error : ${err}`);
+    //     throw err;
+    //   });
 
-    console.log();
+    // console.log();
 
     await blum.getTasks();
 
@@ -70,7 +70,8 @@ async function operation(acc) {
     const uncompletedTasks = blum.tasks.filter(
       (task) =>
         task.status !== "FINISHED" &&
-        task.type === "SOCIAL_SUBSCRIPTION" &&
+        task.type !== "WALLET_CONNECTION" &&
+        task.type !== "PROGRESS_TARGET" &&
         !uncompletableTaskIds.includes(task.id)
     );
 
@@ -109,7 +110,7 @@ let init = false;
 async function startBot() {
   try {
     const tele = await new Telegram();
-    if(init == false){    
+    if (init == false) {
       await tele.init();
       init = true;
     }
@@ -149,7 +150,7 @@ async function startBot() {
         await Helper.delay(1000);
       });
 
-      console.log(acc);
+      // console.log(acc);
       await operation(acc);
     }
 
