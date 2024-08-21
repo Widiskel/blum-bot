@@ -11,7 +11,6 @@ async function operation(acc) {
     await blum.login();
     logger.info(`TOKEN : ${blum.token}`);
 
-    await blum.checkIn();
     await blum.getUser();
     console.log(`===========================================================`);
     console.log(`@${blum.user.username}`);
@@ -19,9 +18,13 @@ async function operation(acc) {
     console.log(`Id           : ${blum.user.id.id}`);
     console.log(`Username     : ${blum.user.username}`);
     await blum.getBalance();
-
     console.log(`Balance      : ${blum.balance.availableBalance}`);
     console.log(`Play Pases   : ${blum.balance.playPasses}`);
+
+    console.log();
+    await blum.checkIn();
+    console.log();
+
     if (blum.balance.farming) {
       console.log(
         `Farming      : ${Helper.readTime(
@@ -73,7 +76,8 @@ async function operation(acc) {
         task.status !== "FINISHED" &&
         task.type !== "WALLET_CONNECTION" &&
         task.type !== "PROGRESS_TARGET" &&
-        !uncompletableTaskIds.includes(task.id)
+        !uncompletableTaskIds.includes(task.id) &&
+        task.subtask != undefined
     );
 
     console.log(`Tasks             : ${blum.tasks.length}`);
@@ -120,15 +124,6 @@ async function startBot() {
     for (const ses of sessionList) {
       await tele.useSession("sessions/" + ses);
       tele.session = ses;
-
-      const user = await tele.client.getMe();
-
-      console.log("USER INFO");
-      console.log("ID       : " + user.id);
-      console.log("Username : " + user.username);
-      console.log("Phone    : " + user.phone);
-      console.log();
-
       const acc = await tele
         .resolvePeer()
         .then(
@@ -167,6 +162,7 @@ async function startBot() {
 (async () => {
   try {
     logger.info("");
+    logger.clear();
     logger.info("Application Started");
     await startBot();
   } catch (error) {

@@ -46,7 +46,6 @@ export class API {
           headers["Content-Length"] = Buffer.byteLength(options.body, "utf-8");
         }
       }
-      logger.info(`Request : ${JSON.stringify(options)}`);
       logger.info(`Request Header : ${JSON.stringify(headers)}`);
       logger.info(`Request Body : ${JSON.stringify(options.body)}`);
 
