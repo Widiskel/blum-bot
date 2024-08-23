@@ -2,8 +2,8 @@ import { API } from "../api/api.js";
 import { Helper } from "../utils/helper.js";
 
 export class Blum extends API {
-  constructor(account) {
-    super();
+  constructor(account, proxy) {
+    super(proxy);
     this.query = account;
   }
 

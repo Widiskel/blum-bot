@@ -1,10 +1,14 @@
+import fetch from "node-fetch";
 import { Helper } from "../utils/helper.js";
 import logger from "../utils/logger.js";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 export class API {
-  constructor() {}
+  constructor(proxy) {
+    this.proxy = proxy;
+  }
 
-  generateHeaders(token, url) {
+  generateHeaders(token) {
     const headers = {
       accept: "application/json, text/plain, */*",
       "user-agent": Helper.randomUserAgent(),
@@ -38,7 +42,18 @@ export class API {
         redirect: "follow",
         referrerPolicy: "no-referrer",
       };
-      logger.info(`${method} : ${url}`);
+      let ip;
+      if (this.proxy) {
+        options.agent = new HttpsProxyAgent(this.proxy);
+        ip = await this.checkIP();
+      }
+      logger.info(
+        `${method} : ${url} ${
+          this.proxy
+            ? `(Requester : Original IP : ${ip[0]} : Proxy IP ${ip[1]})`
+            : ``
+        }`
+      );
 
       if (method !== "GET") {
         if (body != {}) {
@@ -70,6 +85,34 @@ export class API {
     } catch (err) {
       logger.error(`Error : ${err.message}`);
       throw err;
+    }
+  }
+
+  async checkIP() {
+    const options = {};
+
+    if (this.proxy) {
+      let originalIp;
+      let proxyIp;
+      try {
+        const res = await fetch("https://api.ipify.org?format=json", options);
+        const data = await res.json();
+        originalIp = data.ip;
+      } catch (error) {
+        throw Error(`Failed to fetch IP: ${error.message}`);
+      }
+
+      options.agent = new HttpsProxyAgent(this.proxy);
+
+      try {
+        const res = await fetch("https://api.ipify.org?format=json", options);
+        const data = await res.json();
+        proxyIp = data.ip;
+      } catch (error) {
+        throw Error(`Failed to fetch IP: ${error.message}`);
+      }
+
+      return [originalIp, proxyIp];
     }
   }
 }

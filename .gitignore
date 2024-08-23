@@ -5,3 +5,4 @@ test.js
 src/config/config.js
 sessions/*
 .DS_Store
+src/config/proxy_list.js

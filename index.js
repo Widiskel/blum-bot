@@ -1,12 +1,13 @@
 import { Blum } from "./src/blum/blum.js";
+import { proxyList } from "./src/config/proxy_list.js";
 import { Telegram } from "./src/core/telegram.js";
 import { Helper } from "./src/utils/helper.js";
 import logger from "./src/utils/logger.js";
 
-async function operation(acc) {
+async function operation(acc, proxy) {
   logger.clear();
   try {
-    const blum = new Blum(acc);
+    const blum = new Blum(acc, proxy);
 
     await blum.login();
     logger.info(`TOKEN : ${blum.token}`);
@@ -145,8 +146,9 @@ async function startBot() {
         await Helper.delay(1000);
       });
 
-      // console.log(acc);
-      await operation(acc);
+      const accIdx = sessionList.indexOf(ses);
+      const proxy = proxyList.length > 0 ? proxyList[accIdx] : undefined;
+      await operation(acc, proxy);
     }
 
     console.log("-> All Account processed, delaying for 10 minute");
