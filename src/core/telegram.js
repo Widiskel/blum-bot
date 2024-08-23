@@ -4,6 +4,7 @@ import { Config } from "../config/config.js";
 import { Api, TelegramClient } from "telegram";
 import { StoreSession } from "telegram/sessions/StoreSession.js";
 import logger from "../utils/logger.js";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 export class Telegram {
   storeSession;
@@ -74,16 +75,23 @@ export class Telegram {
     }
   }
 
-  async useSession(sessionName) {
+  async useSession(sessionName, proxy) {
+    this.proxy = proxy;
     try {
+      const clientOptions = {
+        connectionRetries: 5,
+      };
+
+      if (this.proxy) {
+        clientOptions.agent = new HttpsProxyAgent(this.proxy);
+      }
+
       this.storeSession = new StoreSession(sessionName);
       this.client = new TelegramClient(
         this.storeSession,
         Config.TELEGRAM_APP_ID,
         Config.TELEGRAM_APP_HASH,
-        {
-          connectionRetries: 5,
-        }
+        clientOptions
       );
       this.storeSession.save();
 
@@ -139,7 +147,7 @@ export class Telegram {
     this.sessionName = undefined;
   }
 
-  async initWebView() {
+  async initWebView(proxy) {
     try {
       const webView = await this.client.invoke(
         new Api.messages.RequestWebView({

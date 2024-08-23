@@ -123,7 +123,9 @@ async function startBot() {
 
     const sessionList = Helper.getSession("sessions");
     for (const ses of sessionList) {
-      await tele.useSession("sessions/" + ses);
+      const accIdx = sessionList.indexOf(ses);
+      const proxy = proxyList.length > 0 ? proxyList[accIdx] : undefined;
+      await tele.useSession("sessions/" + ses, proxy);
       tele.session = ses;
       const acc = await tele
         .resolvePeer()
@@ -146,8 +148,6 @@ async function startBot() {
         await Helper.delay(1000);
       });
 
-      const accIdx = sessionList.indexOf(ses);
-      const proxy = proxyList.length > 0 ? proxyList[accIdx] : undefined;
       await operation(acc, proxy);
     }
 
