@@ -30,7 +30,7 @@ Blum ? Blum is telegram web app mining on telegram, and blum bot is blum auto mi
 - run `npm install`.
 - run `cp src/config/config_tmp.js src/config/config.js && cp src/config/proxy_list_tmp.js src/config/proxy_list.js`
 - To configure the app, open `src/config/config.js` and add your telegram app id and hash there
-- To Configure Proxy, open `src/config/proxy_list.js` and fill up yout proxy using provided format (it currently support only HTTPS proxy)
+- To Configure Proxy, open `src/config/proxy_list.js` and fill up yout proxy using provided format (it currently support only HTTPS proxy), if you don't use proxy then just let it blank [].
 - run `npm run start`
 
 ## How To Update
