@@ -108,7 +108,10 @@ async function operation(acc, proxy) {
     console.log(`===========================================================`);
     console.log();
   } catch (error) {
-    throw error;
+    console.error("Error :", error);
+    console.error("Delaying for 10 Second before retry :");
+    await Helper.delay(10000);
+    await operation(acc, proxy);
   }
 }
 
