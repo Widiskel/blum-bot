@@ -93,6 +93,7 @@ async function operation(acc, proxy) {
       }
     }
 
+    console.log("Play Pass : " + blum.balance.playPasses);
     if (blum.balance.playPasses > 0) {
       for (let play = 0; play < blum.balance.playPasses; play++) {
         var err = false;
@@ -100,6 +101,8 @@ async function operation(acc, proxy) {
           err = true;
         });
         if (err) {
+          console.log("Failed to play game something wen't wrong");
+          console.error(err);
           break;
         }
       }

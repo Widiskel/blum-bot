@@ -192,8 +192,8 @@ export class Blum extends API {
         this.token
       )
         .then(async (data) => {
-          const max = 200;
-          const min = 100;
+          const max = 150;
+          const min = 80;
           console.log(`-> Game Id ${data.gameId}`);
           console.log(`-> Play Game for 30 Second`);
           await Helper.delay(30000);
