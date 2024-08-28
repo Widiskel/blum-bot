@@ -58,11 +58,12 @@ async function operation(acc, query, queryObj, proxy) {
       }
     }
     await Helper.delay(
-      3000,
+      60000 * 10,
       acc,
-      "Account Processing done, continue using next account",
+      "Account Processing Complete, Delaying for 1 hour",
       blum
     );
+    await operation(acc, query, queryObj, proxy);
   } catch (error) {
     await Helper.delay(
       10000,
