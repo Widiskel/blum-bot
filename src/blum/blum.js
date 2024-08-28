@@ -2,13 +2,15 @@ import { API } from "../api/api.js";
 import { Helper } from "../utils/helper.js";
 
 export class Blum extends API {
-  constructor(account, proxy) {
+  constructor(acc, query, queryObj, proxy) {
     super(proxy);
-    this.query = account;
+    this.account = acc;
+    this.query = query;
   }
 
   async login() {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(500, this.account, `Try to Login...`, this);
       await this.fetch(
         "https://gateway.blum.codes/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP",
         "POST",
@@ -17,9 +19,10 @@ export class Blum extends API {
           query: this.query,
         }
       )
-        .then((data) => {
+        .then(async (data) => {
           this.token = data.token.access;
           this.refresh = data.token.refresh;
+          await Helper.delay(500, this.account, `Succesfully Login...`, this);
           resolve();
         })
         .catch((err) => {
@@ -27,15 +30,19 @@ export class Blum extends API {
         });
     });
   }
-  async getUser() {
+  async getUser(msg = false) {
     return new Promise(async (resolve, reject) => {
+      if (msg)
+        await Helper.delay(500, this.account, `Getting User Info...`, this);
       await this.fetch(
         "https://gateway.blum.codes/v1/user/me",
         "GET",
         this.token
       )
-        .then((data) => {
+        .then(async (data) => {
           this.user = data;
+          if (msg)
+            await Helper.delay(500, this.account, `Succesfully Login...`, this);
           resolve();
         })
         .catch((err) => {
@@ -43,14 +50,23 @@ export class Blum extends API {
         });
     });
   }
-  async getBalance() {
+  async getBalance(msg = false) {
     return new Promise(async (resolve, reject) => {
+      if (msg)
+        await Helper.delay(500, this.account, `Getting User Balance...`, this);
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/user/balance",
         "GET",
         this.token
       )
-        .then((data) => {
+        .then(async (data) => {
+          if (msg)
+            await Helper.delay(
+              500,
+              this.account,
+              `Succesfully Get User Balance...`,
+              this
+            );
           this.balance = data;
           resolve();
         })
@@ -61,14 +77,21 @@ export class Blum extends API {
   }
   async claim() {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(
+        500,
+        this.account,
+        `Try To Claim Farming Reward...`,
+        this
+      );
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/farming/claim",
         "POST",
         this.token
       )
-        .then((data) => {
+        .then(async (data) => {
           this.balance.availableBalance = data.availableBalance;
           this.balance.playPasses = data.playPasses;
+          await Helper.delay(1000, this.account, `Farmin Reward Claimed`, this);
           resolve();
         })
         .catch((err) => {
@@ -78,12 +101,13 @@ export class Blum extends API {
   }
   async mining() {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(500, this.account, `Try to Start Farm...`, this);
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/farming/start",
         "POST",
         this.token
       )
-        .then((data) => {
+        .then(async (data) => {
           this.balance.farming = {
             startTime: 0,
             endTime: 0,
@@ -94,6 +118,8 @@ export class Blum extends API {
           this.balance.farming.endTime = data.endTime;
           this.balance.farming.earningsRate = data.earningsRate;
           this.balance.farming.balance = data.balance;
+
+          await Helper.delay(500, this.account, `Farming Started...`, this);
           resolve();
         })
         .catch((err) => {
@@ -103,16 +129,23 @@ export class Blum extends API {
   }
   async getTasks() {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(500, this.account, `Getting Available Task...`, this);
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/tasks",
         "GET",
         this.token
       )
-        .then((data) => {
+        .then(async (data) => {
           this.tasks = [];
           for (const item of data) {
             this.tasks.push(...item.tasks);
           }
+          await Helper.delay(
+            3000,
+            this.account,
+            `Successfully Get Tasks`,
+            this
+          );
           resolve();
         })
         .catch((err) => {
@@ -123,6 +156,12 @@ export class Blum extends API {
 
   async startAndCompleteTask(taskId) {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(
+        500,
+        this.account,
+        `Try To Complete Mission with id ${taskId}...`,
+        this
+      );
       await this.fetch(
         `https://game-domain.blum.codes/api/v1/tasks/${taskId}/start`,
         "POST",
@@ -130,7 +169,6 @@ export class Blum extends API {
       )
         .then(async (data) => {
           if (data.status == "STARTED" || data.status == "READY_FOR_CLAIM") {
-            console.log(`-> Task ${taskId} ${data.title} Started`);
             await this.completeTask(taskId)
               .then(resolve)
               .catch((err) => reject(err));
@@ -145,14 +183,25 @@ export class Blum extends API {
   }
   async completeTask(taskId) {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(
+        500,
+        this.account,
+        `Mission Completion for Task ${taskId} Started`,
+        this
+      );
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/tasks/" + taskId + "/claim",
         "POST",
         this.token
       )
-        .then((data) => {
+        .then(async (data) => {
           if (data.status == "FINISHED") {
-            console.log(`-> Task ${taskId} ${data.title} ${data.status}`);
+            await Helper.delay(
+              500,
+              this.account,
+              `Mission Completion for Task ${taskId} ${data.title} ${data.status}`,
+              this
+            );
             resolve();
           } else {
             resolve();
@@ -163,45 +212,36 @@ export class Blum extends API {
         });
     });
   }
-  async refreshToken() {
-    return new Promise(async (resolve, reject) => {
-      console.log("-> Refreshing token");
-      await this.fetch(
-        "https://gateway.blum.codes/v1/auth/refresh",
-        "POST",
-        undefined,
-        {
-          refresh: this.refresh,
-        }
-      )
-        .then((data) => {
-          this.token = data.access;
-          this.refresh = data.refresh;
-          resolve();
-        })
-        .catch((err) => {
-          reject(new Error("Query Data Expired"));
-        });
-    });
-  }
+
   async play() {
     return new Promise(async (resolve, reject) => {
+      await Helper.delay(
+        500,
+        this.account,
+        `Trying to play a game using play pass...`,
+        this
+      );
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/game/play",
         "POST",
         this.token
       )
         .then(async (data) => {
+          await this.getBalance();
           const max = 250;
           const min = 100;
-          console.log(`-> Game Id ${data.gameId}`);
-          console.log(`-> Play Game for 30 Second`);
+          await Helper.delay(
+            500,
+            this.account,
+            `Got Game ID ${data.gameId},  Start playing 30 Second`,
+            this
+          );
           await Helper.delay(30000);
           await this.claimGame(
             data.gameId,
             Math.floor(Math.random() * (max - min + 1)) + min
           );
-          console.log(`Delaying for 10 Second Before playing next game`);
+
           await Helper.delay(10000);
           resolve();
         })
@@ -211,7 +251,12 @@ export class Blum extends API {
     });
   }
   async claimGame(gameId, score) {
-    console.log(`-> Claim game with score ${score}`);
+    await Helper.delay(
+      500,
+      this.account,
+      `Claiming game ${gameId} With Score ${score}`,
+      this
+    );
     return new Promise(async (resolve, reject) => {
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/game/claim",
@@ -222,9 +267,13 @@ export class Blum extends API {
           points: score,
         }
       )
-        .then((data) => {
-          console.log(data);
-          this.balance.playPasses -= 1;
+        .then(async (data) => {
+          await Helper.delay(
+            10000,
+            this.account,
+            `Game ${gameId} Claimed..`,
+            this
+          );
           resolve();
         })
         .catch((err) => {
@@ -234,28 +283,39 @@ export class Blum extends API {
   }
   async checkIn() {
     return new Promise(async (resolve, reject) => {
-      console.log();
-      console.log("-> Check In");
+      await Helper.delay(500, this.account, `Try to Check In...`, this);
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/daily-reward?offset=-420",
         "GET",
         this.token
       )
         .then(async () => {
-          console.log("-> Check In success");
           await this.fetch(
             "https://game-domain.blum.codes/api/v1/daily-reward?offset=-420",
             "POST",
             this.token
           )
-            .then(resolve)
+            .then(async () => {
+              await Helper.delay(
+                1000,
+                this.account,
+                `Successfully Check In`,
+                this
+              );
+              resolve();
+            })
             .catch((err) => {
               reject(err);
             });
         })
-        .catch((err) => {
+        .catch(async (err) => {
           if (err.message.includes("Not Found")) {
-            console.log("-> Already Checked In");
+            await Helper.delay(
+              1000,
+              this.account,
+              `User Already Checked In`,
+              this
+            );
             resolve();
           } else {
             reject(err);

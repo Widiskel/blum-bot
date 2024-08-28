@@ -1,72 +1,26 @@
 import { Blum } from "./src/blum/blum.js";
+import { Config } from "./src/config/config.js";
 import { proxyList } from "./src/config/proxy_list.js";
 import { Telegram } from "./src/core/telegram.js";
 import { Helper } from "./src/utils/helper.js";
 import logger from "./src/utils/logger.js";
 
-async function operation(acc, proxy) {
+async function operation(acc, query, queryObj, proxy) {
   logger.clear();
   try {
-    const blum = new Blum(acc, proxy);
+    const blum = new Blum(acc, query, queryObj, proxy);
 
     await blum.login();
-    logger.info(`TOKEN : ${blum.token}`);
-
-    await blum.getUser();
-    console.log(`===========================================================`);
-    console.log(`@${blum.user.username}`);
-    console.log(`===========================================================`);
-    console.log(`Id           : ${blum.user.id.id}`);
-    console.log(`Username     : ${blum.user.username}`);
-    await blum.getBalance();
-    console.log(`Balance      : ${blum.balance.availableBalance}`);
-    console.log(`Play Pases   : ${blum.balance.playPasses}`);
-
-    console.log();
+    await blum.getUser(true);
+    await blum.getBalance(true);
+    await blum.getTasks();
     await blum.checkIn();
-    console.log();
-
     if (blum.balance.farming) {
-      console.log(
-        `Farming      : ${Helper.readTime(
-          blum.balance.farming.startTime
-        )} - ${Helper.readTime(blum.balance.farming.endTime)} Rate: ${
-          blum.balance.farming.earningsRate
-        } Balance : ${blum.balance.farming.balance}  ${
-          Helper.isFutureTime(blum.balance.farming.endTime)
-            ? "(Claimable)"
-            : "(Unclaimable)"
-        }`
-      );
-      console.log();
       if (Helper.isFutureTime(blum.balance.farming.endTime)) {
-        await blum
-          .claim()
-          .then(() => {
-            console.log("-> Mining Claimed Successfully");
-          })
-          .catch((err) => {
-            console.error("Error during claim:", err.message);
-            logger.info(`Application Error : ${err}`);
-            throw err;
-          });
+        await blum.claim();
       }
     }
-    await blum
-      .mining()
-      .then(() => {
-        console.log("-> Mining Started Successfully");
-      })
-      .catch((err) => {
-        console.error("Error during mining:", err.message);
-        logger.info(`Application Error : ${err}`);
-        throw err;
-      });
-
-    console.log();
-
-    await blum.getTasks();
-
+    await blum.mining();
     const uncompletableTaskIds = [
       "a90d8b81-0974-47f1-bb00-807463433bde",
       "03e4a46f-7588-4950-8289-f42787e3eca2",
@@ -80,11 +34,6 @@ async function operation(acc, proxy) {
         !uncompletableTaskIds.includes(task.id) &&
         task.subtask != undefined
     );
-
-    console.log(`Tasks             : ${blum.tasks.length}`);
-    console.log(`Uncompleted Task  : ${uncompletedTasks.length}`);
-    console.log();
-
     for (const task of uncompletedTasks) {
       if (task.status === "NOT_STARTED") {
         await blum.startAndCompleteTask(task.id);
@@ -93,78 +42,97 @@ async function operation(acc, proxy) {
       }
     }
 
-    console.log("Play Pass : " + blum.balance.playPasses);
-    if (blum.balance.playPasses > 0) {
-      for (let play = 0; play < blum.balance.playPasses; play++) {
-        var err = false;
-        await blum.play().catch(() => {
-          err = true;
-        });
-        if (err) {
-          console.log("Failed to play game something wen't wrong");
-          console.error(err);
-          break;
-        }
+    while (blum.balance.playPasses > 0) {
+      var err = false;
+      await blum.play().catch(() => {
+        err = true;
+      });
+      if (err) {
+        await Helper.delay(
+          3000,
+          acc,
+          "Failed to play game something wen't wrong"
+        );
+        logger.error(err);
+        break;
       }
     }
-    console.log("Account Processing done, continue using next account");
-    console.log(`===========================================================`);
-    console.log();
+    await Helper.delay(
+      3000,
+      acc,
+      "Account Processing done, continue using next account",
+      blum
+    );
   } catch (error) {
-    console.error("Error :", error);
-    console.error("Delaying for 10 Second before retry :");
-    await Helper.delay(10000);
+    await Helper.delay(10000, acc, `Error : ${err}, Retrying after 10 Second`);
     await operation(acc, proxy);
   }
 }
 
 let init = false;
 async function startBot() {
-  try {
-    const tele = await new Telegram();
-    if (init == false) {
-      await tele.init();
-      init = true;
-    }
+  return new Promise(async (resolve, reject) => {
+    try {
+      logger.info(`BOT STARTED`);
+      if (
+        Config.TELEGRAM_APP_ID == undefined ||
+        Config.TELEGRAM_APP_HASH == undefined
+      ) {
+        throw new Error(
+          "Please configure your TELEGRAM_APP_ID and TELEGRAM_APP_HASH first"
+        );
+      }
 
-    const sessionList = Helper.getSession("sessions");
-    for (const ses of sessionList) {
-      const accIdx = sessionList.indexOf(ses);
-      const proxy = proxyList.length > 0 ? proxyList[accIdx] : undefined;
-      await tele.useSession("sessions/" + ses, proxy);
-      tele.session = ses;
-      const acc = await tele
-        .resolvePeer()
-        .then(
-          async () =>
-            await tele
-              .initWebView()
-              .then((query) => {
-                return query;
-              })
-              .catch((err) => {
-                throw err;
-              })
-        )
-        .catch((err) => {
-          throw err;
-        });
+      const tele = await new Telegram();
+      if (init == false) {
+        await tele.init();
+        init = true;
+      }
 
-      await tele.disconnect().then(async () => {
-        await Helper.delay(1000);
+      const sessionList = Helper.getSession("sessions");
+      const paramList = [];
+
+      if (proxyList.length > 0) {
+        if (sessionList.length != proxyList.length) {
+          reject(
+            `You have ${sessionList.length} Session but you provide ${proxyList.length} Proxy`
+          );
+        }
+      }
+
+      for (const acc of sessionList) {
+        const accIdx = sessionList.indexOf(acc);
+        const proxy = proxyList.length > 0 ? proxyList[accIdx] : undefined;
+
+        await tele.useSession("sessions/" + acc, proxy);
+        tele.session = acc;
+        const user = await tele.client.getMe();
+        const query = await tele
+          .resolvePeer()
+          .then(async () => {
+            return await tele.initWebView();
+          })
+          .catch((err) => {
+            throw err;
+          });
+
+        const queryObj = Helper.queryToJSON(query);
+        await tele.disconnect();
+        paramList.push([user, query, queryObj, proxy]);
+      }
+
+      const promiseList = paramList.map(async (data) => {
+        await operation(data[0], data[1], data[2], data[3]);
       });
 
-      await operation(acc, proxy);
+      await Promise.all(promiseList);
+      resolve();
+    } catch (error) {
+      logger.info(`BOT STOPPED`);
+      logger.error(JSON.stringify(error));
+      reject(error);
     }
-
-    console.log("-> All Account processed, delaying for 10 minute");
-    await Helper.delay(60000 * 10);
-    await startBot();
-  } catch (error) {
-    console.error("Error :", error);
-    logger.info(`Application Error : ${error}`);
-    logger.error(JSON.stringify(error));
-  }
+  });
 }
 
 (async () => {

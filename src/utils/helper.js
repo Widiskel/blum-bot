@@ -3,6 +3,7 @@ import moment from "moment";
 import momentTz from "moment-timezone";
 import fs from "fs";
 import path from "path";
+import twist from "./twist.js";
 
 export class Helper {
   /**
@@ -66,9 +67,45 @@ export class Helper {
     }
   }
 
-  static async delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  static delay = (ms, acc, msg, obj) => {
+    return new Promise((resolve) => {
+      let remainingMilliseconds = ms;
+
+      if (acc != undefined) {
+        twist.log(msg, acc, obj, `Delaying for ${this.msToTime(ms)}`);
+      } else {
+        twist.info(`Delaying for ${this.msToTime(ms)}`);
+      }
+
+      const interval = setInterval(() => {
+        remainingMilliseconds -= 1000;
+        if (acc != undefined) {
+          twist.log(
+            msg,
+            acc,
+            obj,
+            `Delaying for ${this.msToTime(remainingMilliseconds)}`
+          );
+        } else {
+          twist.info(`Delaying for ${this.msToTime(remainingMilliseconds)}`);
+        }
+
+        if (remainingMilliseconds <= 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 1000);
+
+      setTimeout(async () => {
+        clearInterval(interval);
+        await twist.clearInfo();
+        if (acc) {
+          twist.log(msg, acc, obj);
+        }
+        resolve();
+      }, ms);
+    });
+  };
 
   static getSession(sessionName) {
     try {
@@ -191,5 +228,32 @@ export class Helper {
     }
 
     return resultArray.join("&");
+  }
+
+  static queryToJSON(query) {
+    const queryObject = {};
+    const pairs = query.split("&");
+
+    pairs.forEach((pair) => {
+      const [key, value] = pair.split("=");
+      if (key === "user") {
+        queryObject[key] = JSON.parse(decodeURIComponent(value));
+      } else {
+        queryObject[key] = decodeURIComponent(value);
+      }
+    });
+
+    return queryObject;
+  }
+
+  static msToTime(milliseconds) {
+    const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+    const remainingMillisecondsAfterHours = milliseconds % (1000 * 60 * 60);
+    const minutes = Math.floor(remainingMillisecondsAfterHours / (1000 * 60));
+    const remainingMillisecondsAfterMinutes =
+      remainingMillisecondsAfterHours % (1000 * 60);
+    const seconds = Math.round(remainingMillisecondsAfterMinutes / 1000);
+
+    return `${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
   }
 }
