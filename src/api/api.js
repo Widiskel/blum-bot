@@ -80,7 +80,16 @@ export class API {
         logger.info(`Response Data : ${JSON.stringify(data)}`);
         return data;
       } else {
-        throw new Error(res.statusText);
+        if (this.proxy) {
+          if (res.status == 520) {
+            throw Error(`520 Bad Gateway (Posible Proxy Problem)`);
+          }
+        }
+        if (res.status == 520) {
+          throw Error(`520 Bad Gateway (Posible Game Server Problem)`);
+        }
+
+        throw new Error(`${res.status} Something wen't wrong`);
       }
     } catch (err) {
       logger.error(`Error : ${err.message}`);

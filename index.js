@@ -64,8 +64,12 @@ async function operation(acc, query, queryObj, proxy) {
       blum
     );
   } catch (error) {
-    await Helper.delay(10000, acc, `Error : ${err}, Retrying after 10 Second`);
-    await operation(acc, proxy);
+    await Helper.delay(
+      10000,
+      acc,
+      `Error : ${error}, Retrying after 10 Second`
+    );
+    await operation(acc, query, queryObj, proxy);
   }
 }
 
