@@ -89,7 +89,9 @@ export class API {
           throw Error(`520 Bad Gateway (Posible Game Server Problem)`);
         }
 
-        throw new Error(`${res.status} Something wen't wrong`);
+        throw new Error(
+          `${res.status} ${res.statusText ?? "Something wen't wrong"}`
+        );
       }
     } catch (err) {
       logger.error(`Error : ${err.message}`);
