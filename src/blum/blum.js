@@ -233,16 +233,20 @@ export class Blum extends API {
           await Helper.delay(
             500,
             this.account,
-            `Got Game ID ${data.gameId},  Start playing 30 Second`,
+            `Got Game ID ${data.gameId},  Start playing`,
             this
           );
-          await Helper.delay(30000);
+          await Helper.delay(
+            30000,
+            this.account,
+            `Game ID ${data.gameId}, Playing for 30 Second`,
+            this
+          );
           await this.claimGame(
             data.gameId,
             Math.floor(Math.random() * (max - min + 1)) + min
           );
 
-          await Helper.delay(10000);
           resolve();
         })
         .catch((err) => {
@@ -271,7 +275,7 @@ export class Blum extends API {
           await Helper.delay(
             10000,
             this.account,
-            `Game ${gameId} Claimed..`,
+            `Game ${gameId} Claimed with Score ${score}. Delaying For 10 Second`,
             this
           );
           resolve();

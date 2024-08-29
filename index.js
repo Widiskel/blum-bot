@@ -51,7 +51,8 @@ async function operation(acc, query, queryObj, proxy) {
         await Helper.delay(
           3000,
           acc,
-          "Failed to play game something wen't wrong"
+          "Failed to play game something wen't wrong",
+          blum
         );
         logger.error(err);
         break;
@@ -68,7 +69,8 @@ async function operation(acc, query, queryObj, proxy) {
     await Helper.delay(
       10000,
       acc,
-      `Error : ${error}, Retrying after 10 Second`
+      `Error : ${error}, Retrying after 10 Second`,
+      blum
     );
     await operation(acc, query, queryObj, proxy);
   }
