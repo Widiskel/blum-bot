@@ -30,7 +30,7 @@ Blum ? Blum is telegram web app mining on telegram, and blum bot is blum auto mi
 - run `npm install`.
 - run `cp src/config/config_tmp.js src/config/config.js && cp src/config/proxy_list_tmp.js src/config/proxy_list.js`
 - To configure the app, run `nano src/config/config.js` and add your telegram app id and hash there
-- To Configure Proxy, run `nano src/config/proxy_list.js` and fill up yout proxy using provided format (it currently support only HTTPS proxy), if you don't use proxy then just let it blank [].
+- To Configure Proxy, run `nano src/config/proxy_list.js` and fill up your proxy using provided format (it currently support only HTTPS proxy), if you don't use proxy then just let it blank [].
 ```
 export const proxyList = [];
 ```
@@ -45,7 +45,7 @@ export const proxyList = [];
 
 ## Note
 
-This bot using telegram sessions. if you ever one of my bot that use telegram sessions, you can just copy the sessions folder to this bot.
+This bot using telegram sessions. if you ever use one of my bot that use telegram sessions, you can just copy the sessions folder to this bot.
 
 if any error happen please check [HERE](https://github.com/Widiskel/blum-bot)
 check the commit if any new commit, then update the bot.
