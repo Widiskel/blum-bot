@@ -48,10 +48,20 @@ export const proxyList = [];
    4. Start The bot Again after account creation complete
 5. `Query` Type
    1. Enter Account Name
-   2. Enter Telegram Query
+   2. Enter Telegram Query (you can get query by opening bot app on browser > inspect element > storage / application > session storage > telegram init params > copy tg web app data value)
    3. Start The bot Again after account creation complete
 6.  after bot started choose option 3 start bot
 7.  if something wrong with your Account, reset Account (option 2) first or just delete problematic a, to cancel running bot press `ctrl+c` twice, and start again [from No 1.](#setup-session).
+   
+
+## Session Troubleshoot
+If you asked to enter phone number again after sessions creation, it mean session not initialized correctly, try to delete the created sessions. 
+
+Example Case
+- example you already have 1 session (sessionA) and all good when you run bot. After that you create another session, but when you run bot, the bot asked to enter phone number again, so the problem is on (sessionB), to fix it just remove the `accounts/sessionB` folder and re create it or just delete all folder inside `accounts` directory with prefix `sessions-`.
+
+## Query Troubleshoot
+if your bot get eror, with some error code `401` it mean your query expired, go get new query and run bot again and choose option `4` for query modification. 
 
 ## How To Update
 
