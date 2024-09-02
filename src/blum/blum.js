@@ -261,43 +261,43 @@ export class Blum extends API {
       `Claiming game ${gameId} With Score ${score}`,
       this
     );
-    return new Promise(async (resolve, reject) => {
-      let retryCount = 0;
 
-      await this.fetch(
-        "https://game-domain.blum.codes/api/v1/game/claim",
-        "POST",
-        this.token,
-        {
-          gameId: gameId,
-          points: score,
-        }
-      )
-        .then(async (data) => {
-          await Helper.delay(
-            10000,
-            this.account,
-            `Game ${gameId} Claimed with Score ${score}. Delaying For 10 Second`,
-            this
-          );
-          resolve();
-        })
-        .catch(async (err) => {
-          if (retryCount != 3) {
-            retryCount += 1;
-            await Helper.delay(
-              3000,
-              this.account,
-              `Claim game failed, retrying after 3 second`,
-              this
-            );
-            await this.claimGame(gameId, score).then(resolve);
-          } else {
-            reject(err);
+    const maxRetries = 3;
+    let retryCount = 0;
+
+    while (retryCount <= maxRetries) {
+      try {
+        await this.fetch(
+          "https://game-domain.blum.codes/api/v1/game/claim",
+          "POST",
+          this.token,
+          {
+            gameId: gameId,
+            points: score,
           }
-        });
-    });
+        );
+        await Helper.delay(
+          10000,
+          this.account,
+          `Game ${gameId} Claimed with Score ${score}. Delaying For 10 Second`,
+          this
+        );
+        return; // Resolve the promise
+      } catch (err) {
+        retryCount += 1;
+        if (retryCount > maxRetries) {
+          return Promise.reject(err); // Reject if max retries reached
+        }
+        await Helper.delay(
+          3000,
+          this.account,
+          `Claim game failed, retrying after 3 seconds`,
+          this
+        );
+      }
+    }
   }
+
   async checkIn() {
     return new Promise(async (resolve, reject) => {
       await Helper.delay(500, this.account, `Try to Check In...`, this);
