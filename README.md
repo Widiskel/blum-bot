@@ -51,7 +51,7 @@ export const proxyList = [];
    2. Enter Telegram Query (you can get query by opening bot app on browser > inspect element > storage / application > session storage > telegram init params > copy tg web app data value)
    3. Start The bot Again after account creation complete
 6.  after bot started choose option 3 start bot
-7.  if something wrong with your Account, reset Account (option 2) first or just delete problematic a, to cancel running bot press `ctrl+c` twice, and start again [from No 1.](#setup-session).
+7.  if something wrong with your Account, reset Account (option 2) first or just delete problematic a, to cancel running bot press `ctrl+c` twice, and start again [from No 1.](#setup-accounts).
    
 
 ## Session Troubleshoot
@@ -72,7 +72,9 @@ if your bot get eror, with some error code `401` it mean your query expired, go 
 
 ## Note
 
-This bot using telegram sessions. if you ever use one of my bot that use telegram sessions, you can just copy the sessions folder to this bot.
 
-if any error happen please check [HERE](https://github.com/Widiskel/blum-bot)
-check the commit if any new commit, then update the bot.
+Don't use bot with `session` type if you using telegram account that bought from someone because it can make your telegram account deleted. instead of using `session` type, use `query` type.
+
+This bot can use Telegram Query and Telegram Sessions. if you want to use sessions, and ever use one of my bot that use telegram sessions, you can just copy the sessions folder to this bot. Also for the telegram APP ID and Hash you can use it on another bot. If you want to use Telegram Query, get your query manually.
+
+if you got error `Invalid ConstructorId` try to run this ```npm i telegram@2.22.2```
