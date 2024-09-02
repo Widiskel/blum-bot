@@ -262,6 +262,8 @@ export class Blum extends API {
       this
     );
     return new Promise(async (resolve, reject) => {
+      let retryCount = 0;
+
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/game/claim",
         "POST",
@@ -280,8 +282,19 @@ export class Blum extends API {
           );
           resolve();
         })
-        .catch((err) => {
-          reject(err);
+        .catch(async (err) => {
+          if (retryCount != 3) {
+            retryCount += 1;
+            await Helper.delay(
+              3000,
+              this.account,
+              `Claim game failed, retrying after 3 second`,
+              this
+            );
+            await this.claimGame(gameId, score).then(resolve);
+          } else {
+            reject(err);
+          }
         });
     });
   }
