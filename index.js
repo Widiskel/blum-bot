@@ -41,12 +41,12 @@ async function operation(acc, query, queryObj, proxy) {
       }
     }
 
+    let err = 0;
     while (blum.balance.playPasses > 0) {
-      var err = false;
       await blum.play().catch(() => {
-        err = true;
+        err += 1;
       });
-      if (err) {
+      if (err > 5) {
         await Helper.delay(
           3000,
           acc,
