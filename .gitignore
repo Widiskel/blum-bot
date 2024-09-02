@@ -3,6 +3,6 @@ account.js
 log/app.log
 test.js
 src/config/config.js
-sessions/*
+accounts/*
 .DS_Store
 src/config/proxy_list.js

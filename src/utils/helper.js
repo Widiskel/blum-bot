@@ -3,6 +3,7 @@ import moment from "moment";
 import momentTz from "moment-timezone";
 import fs from "fs";
 import path from "path";
+import { parse, stringify } from "querystring";
 import twist from "./twist.js";
 
 export class Helper {
@@ -109,7 +110,7 @@ export class Helper {
 
   static getSession(sessionName) {
     try {
-      const sessionsPath = "sessions";
+      const sessionsPath = "accounts";
       if (!fs.existsSync(sessionsPath)) {
         fs.mkdirSync(sessionsPath);
       }
@@ -140,24 +141,6 @@ export class Helper {
       console.info("Sessions reset successfully");
     } catch (error) {
       throw Error(`Error deleting session files: ${error},`);
-    }
-  }
-
-  static createDir(dirName) {
-    try {
-      const sessionsPath = "sessions";
-      if (!fs.existsSync(sessionsPath)) {
-        fs.mkdirSync(sessionsPath);
-      }
-
-      const dirPath = path.join(sessionsPath, dirName);
-
-      fs.mkdirSync(dirPath, { recursive: true });
-
-      console.log(dirPath);
-      return dirPath;
-    } catch (error) {
-      throw new Error(`Error creating directory: ${error}`);
     }
   }
 
@@ -230,20 +213,38 @@ export class Helper {
     return resultArray.join("&");
   }
 
-  static queryToJSON(query) {
-    const queryObject = {};
-    const pairs = query.split("&");
+  static createDir(dirName) {
+    try {
+      const accountPaths = "accounts";
+      const dirPath = path.join(accountPaths, dirName);
 
-    pairs.forEach((pair) => {
-      const [key, value] = pair.split("=");
-      if (key === "user") {
-        queryObject[key] = JSON.parse(decodeURIComponent(value));
+      if (!fs.existsSync(accountPaths)) {
+        fs.mkdirSync(accountPaths);
+      }
+
+      fs.mkdirSync(dirPath, { recursive: true });
+
+      console.log(dirPath);
+      return dirPath;
+    } catch (error) {
+      throw new Error(`Error creating directory: ${error}`);
+    }
+  }
+  static saveQueryFile(queryFilePath, query) {
+    const filePath = path.resolve(queryFilePath, "query.txt");
+
+    fs.writeFile(filePath, query, "utf8", (err) => {
+      if (err) {
+        console.error("Error writing file:", err);
       } else {
-        queryObject[key] = decodeURIComponent(value);
+        console.log("Query File Created/Modified Successfully.");
       }
     });
+  }
 
-    return queryObject;
+  static random(min, max) {
+    const rand = Math.floor(Math.random() * (max - min + 1)) + min;
+    return rand;
   }
 
   static msToTime(milliseconds) {
@@ -255,5 +256,46 @@ export class Helper {
     const seconds = Math.round(remainingMillisecondsAfterMinutes / 1000);
 
     return `${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
+  }
+
+  static queryToJSON(query) {
+    try {
+      const queryObject = {};
+      const pairs = query.split("&");
+
+      pairs.forEach((pair) => {
+        const [key, value] = pair.split("=");
+        if (key === "user") {
+          queryObject[key] = JSON.parse(decodeURIComponent(value));
+        } else {
+          queryObject[key] = decodeURIComponent(value);
+        }
+      });
+
+      return queryObject;
+    } catch (error) {
+      throw Error("Invalid Query");
+    }
+  }
+
+  static generateRandomString(length) {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  static readQueryFile(queryPath) {
+    try {
+      const fullPath = path.resolve(queryPath);
+      const query = fs.readFileSync(fullPath, "utf8");
+      return query;
+    } catch (error) {
+      console.log("No query.txt Files Found");
+    }
   }
 }

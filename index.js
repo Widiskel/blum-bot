@@ -1,5 +1,4 @@
 import { Blum } from "./src/blum/blum.js";
-import { Config } from "./src/config/config.js";
 import { proxyList } from "./src/config/proxy_list.js";
 import { Telegram } from "./src/core/telegram.js";
 import { Helper } from "./src/utils/helper.js";
@@ -80,14 +79,6 @@ async function startBot() {
   return new Promise(async (resolve, reject) => {
     try {
       logger.info(`BOT STARTED`);
-      if (
-        Config.TELEGRAM_APP_ID == undefined ||
-        Config.TELEGRAM_APP_HASH == undefined
-      ) {
-        throw new Error(
-          "Please configure your TELEGRAM_APP_ID and TELEGRAM_APP_HASH first"
-        );
-      }
 
       const tele = await new Telegram();
       if (init == false) {
@@ -95,36 +86,44 @@ async function startBot() {
         init = true;
       }
 
-      const sessionList = Helper.getSession("sessions");
+      const accountList = Helper.getSession("accounts");
       const paramList = [];
 
       if (proxyList.length > 0) {
-        if (sessionList.length != proxyList.length) {
+        if (accountList.length != proxyList.length) {
           reject(
-            `You have ${sessionList.length} Session but you provide ${proxyList.length} Proxy`
+            `You have ${accountList.length} Session but you provide ${proxyList.length} Proxy`
           );
         }
       }
 
-      for (const acc of sessionList) {
-        const accIdx = sessionList.indexOf(acc);
+      for (const acc of accountList) {
+        const accIdx = accountList.indexOf(acc);
         const proxy = proxyList.length > 0 ? proxyList[accIdx] : undefined;
+        if (!acc.includes("query")) {
+          await tele.useSession("accounts/" + acc, proxy);
+          tele.session = acc;
+          const user = await tele.client.getMe();
+          const query = await tele
+            .resolvePeer()
+            .then(async () => {
+              return await tele.initWebView();
+            })
+            .catch((err) => {
+              throw err;
+            });
 
-        await tele.useSession("sessions/" + acc, proxy);
-        tele.session = acc;
-        const user = await tele.client.getMe();
-        const query = await tele
-          .resolvePeer()
-          .then(async () => {
-            return await tele.initWebView();
-          })
-          .catch((err) => {
-            throw err;
-          });
-
-        const queryObj = Helper.queryToJSON(query);
-        await tele.disconnect();
-        paramList.push([user, query, queryObj, proxy]);
+          const queryObj = Helper.queryToJSON(query);
+          await tele.disconnect();
+          paramList.push([user, query, queryObj, proxy]);
+        } else {
+          const query = Helper.readQueryFile("accounts/" + acc + "/query.txt");
+          const queryObj = Helper.queryToJSON(query);
+          const user = queryObj.user;
+          user.firstName = user.first_name;
+          user.lastName = user.last_name;
+          paramList.push([user, query, queryObj, proxy]);
+        }
       }
 
       const promiseList = paramList.map(async (data) => {

@@ -229,7 +229,7 @@ export class Blum extends API {
         .then(async (data) => {
           await this.getBalance();
           const max = 250;
-          const min = 100;
+          const min = 200;
           await Helper.delay(
             500,
             this.account,
