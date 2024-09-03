@@ -125,22 +125,22 @@ export class Helper {
     }
   }
 
-  static resetSession(sessionName) {
+  static resetAccounts(accountsName) {
     try {
-      const files = fs.readdirSync(path.resolve(sessionName));
-      console.log("Deleting Sessions...");
+      const files = fs.readdirSync(path.resolve(accountsName));
+      console.log("Deleting All Accounts...");
       files.forEach((file) => {
         fs.rm(
-          `${path.join(path.resolve("sessions"), file)}`,
+          `${path.join(path.resolve("accounts"), file)}`,
           { recursive: true },
           (err) => {
             if (err) throw err;
           }
         );
       });
-      console.info("Sessions reset successfully");
+      console.info("Accounts reset successfully");
     } catch (error) {
-      throw Error(`Error deleting session files: ${error},`);
+      throw Error(`Error deleting accounts files: ${error},`);
     }
   }
 
