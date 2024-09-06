@@ -12,7 +12,7 @@ export class Blum extends API {
     return new Promise(async (resolve, reject) => {
       await Helper.delay(500, this.account, `Try to Login...`, this);
       await this.fetch(
-        "https://gateway.blum.codes/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP",
+        "https://user-domain.blum.codes/api/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP",
         "POST",
         undefined,
         {
