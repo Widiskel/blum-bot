@@ -127,9 +127,15 @@ export class Blum extends API {
         });
     });
   }
-  async getTasks() {
+  async getTasks(msg = false) {
     return new Promise(async (resolve, reject) => {
-      await Helper.delay(500, this.account, `Getting Available Task...`, this);
+      if (msg)
+        await Helper.delay(
+          500,
+          this.account,
+          `Getting Available Task...`,
+          this
+        );
       await this.fetch(
         "https://game-domain.blum.codes/api/v1/tasks",
         "GET",
@@ -137,15 +143,20 @@ export class Blum extends API {
       )
         .then(async (data) => {
           this.tasks = [];
-          for (const item of data) {
-            this.tasks.push(...item.tasks);
+          for (const tasks of data) {
+            if (tasks.subSections) {
+              for (const subsection of tasks.subSections) {
+                this.tasks.push(...subsection.tasks);
+              }
+            }
           }
-          await Helper.delay(
-            3000,
-            this.account,
-            `Successfully Get Tasks`,
-            this
-          );
+          if (msg)
+            await Helper.delay(
+              3000,
+              this.account,
+              `Successfully Get Tasks`,
+              this
+            );
           resolve();
         })
         .catch((err) => {
@@ -202,6 +213,7 @@ export class Blum extends API {
               `Mission Completion for Task ${taskId} ${data.title} ${data.status}`,
               this
             );
+            await this.getTasks();
             resolve();
           } else {
             resolve();

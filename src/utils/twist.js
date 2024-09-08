@@ -38,7 +38,12 @@ class Twist {
       : "-";
 
     const task = blum.tasks ?? [];
-    const completedTask = task.length != 0 ? task.length : "-";
+    const completedTask =
+      task.length != 0
+        ? task.filter((item) => {
+            return item.status === "FINISHED";
+          }).length
+        : "-";
     const uncompletableTaskIds = [
       "a90d8b81-0974-47f1-bb00-807463433bde",
       "03e4a46f-7588-4950-8289-f42787e3eca2",
@@ -50,8 +55,7 @@ class Twist {
               item.status !== "FINISHED" &&
               item.type !== "WALLET_CONNECTION" &&
               item.type !== "PROGRESS_TARGET" &&
-              !uncompletableTaskIds.includes(item.id) &&
-              item.subtask != undefined
+              !uncompletableTaskIds.includes(item.id)
           ).length
         : "-";
 

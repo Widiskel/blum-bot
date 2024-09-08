@@ -12,7 +12,7 @@ async function operation(acc, query, queryObj, proxy) {
     await blum.login();
     await blum.getUser(true);
     await blum.getBalance(true);
-    await blum.getTasks();
+    await blum.getTasks(true);
     await blum.checkIn();
     if (blum.balance.farming) {
       if (Helper.isFutureTime(blum.balance.farming.endTime)) {
@@ -30,8 +30,7 @@ async function operation(acc, query, queryObj, proxy) {
         task.status !== "FINISHED" &&
         task.type !== "WALLET_CONNECTION" &&
         task.type !== "PROGRESS_TARGET" &&
-        !uncompletableTaskIds.includes(task.id) &&
-        task.subtask != undefined
+        !uncompletableTaskIds.includes(task.id)
     );
     for (const task of uncompletedTasks) {
       if (task.status === "NOT_STARTED") {
