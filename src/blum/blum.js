@@ -168,7 +168,7 @@ export class Blum extends API {
   async startAndCompleteTask(taskId) {
     return new Promise(async (resolve, reject) => {
       await Helper.delay(
-        500,
+        1000,
         this.account,
         `Try To Complete Mission with id ${taskId}...`,
         this
@@ -195,7 +195,7 @@ export class Blum extends API {
   async completeTask(taskId) {
     return new Promise(async (resolve, reject) => {
       await Helper.delay(
-        500,
+        2000,
         this.account,
         `Mission Completion for Task ${taskId} Started`,
         this
@@ -208,7 +208,7 @@ export class Blum extends API {
         .then(async (data) => {
           if (data.status == "FINISHED") {
             await Helper.delay(
-              500,
+              3000,
               this.account,
               `Mission Completion for Task ${taskId} ${data.title} ${data.status}`,
               this
