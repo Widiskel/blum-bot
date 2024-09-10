@@ -1,4 +1,5 @@
 import { Blum } from "./src/blum/blum.js";
+import { TASKANSWER } from "./src/blum/taskanswer.js";
 import { proxyList } from "./src/config/proxy_list.js";
 import { Telegram } from "./src/core/telegram.js";
 import { Helper } from "./src/utils/helper.js";
@@ -34,7 +35,14 @@ async function operation(acc, query, queryObj, proxy) {
     );
     for (const task of uncompletedTasks) {
       if (task.status === "NOT_STARTED") {
-        await blum.startAndCompleteTask(task.id);
+        if ((task.validationType = "DEFAULT")) {
+          await blum.startAndCompleteTask(task.id);
+        } else {
+          const answer = TASKANSWER.getAnswer(task.id);
+          if (answer) {
+            await blum.validateAndCompleteTask(task.id, answer);
+          }
+        }
       } else {
         await blum.completeTask(task.id);
       }

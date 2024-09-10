@@ -192,6 +192,34 @@ export class Blum extends API {
         });
     });
   }
+  async validateAndCompleteTask(taskId, answer) {
+    return new Promise(async (resolve, reject) => {
+      await Helper.delay(
+        1000,
+        this.account,
+        `Try To Validating Mission with id ${taskId}...`,
+        this
+      );
+      const body = { keyword: answer };
+      await this.fetch(
+        `https://game-domain.blum.codes/api/v1/tasks/${taskId}/validate`,
+        "POST",
+        this.token
+      )
+        .then(async (data) => {
+          if (data.status == "STARTED" || data.status == "READY_FOR_CLAIM") {
+            await this.completeTask(taskId)
+              .then(resolve)
+              .catch((err) => reject(err));
+          } else {
+            resolve();
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
   async completeTask(taskId) {
     return new Promise(async (resolve, reject) => {
       await Helper.delay(
