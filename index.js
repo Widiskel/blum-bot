@@ -35,7 +35,7 @@ async function operation(acc, query, queryObj, proxy) {
     );
     for (const task of uncompletedTasks) {
       if (task.status === "NOT_STARTED" || task.status == "READY_FOR_VERIFY") {
-        if ((task.validationType = "DEFAULT")) {
+        if (task.validationType == "DEFAULT") {
           await blum.startAndCompleteTask(task.id);
         } else {
           const answer = TASKANSWER.getAnswer(task.id);
