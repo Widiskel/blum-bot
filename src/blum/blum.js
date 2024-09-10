@@ -204,7 +204,8 @@ export class Blum extends API {
       await this.fetch(
         `https://game-domain.blum.codes/api/v1/tasks/${taskId}/validate`,
         "POST",
-        this.token
+        this.token,
+        body
       )
         .then(async (data) => {
           if (data.status == "STARTED" || data.status == "READY_FOR_CLAIM") {
