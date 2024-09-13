@@ -13,8 +13,8 @@ async function operation(acc, query, queryObj, proxy) {
     await blum.login();
     await blum.getUser(true);
     await blum.getBalance(true);
-    await blum.getTasks(true);
     await blum.checkIn();
+    await blum.getTasks(true);
     if (blum.balance.farming) {
       if (Helper.isFutureTime(blum.balance.farming.endTime)) {
         await blum.claim();

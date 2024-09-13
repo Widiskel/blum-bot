@@ -137,7 +137,7 @@ export class Blum extends API {
           this
         );
       await this.fetch(
-        "https://game-domain.blum.codes/api/v1/tasks",
+        "https://earn-domain.blum.codes/api/v1/tasks",
         "GET",
         this.token
       )
@@ -174,7 +174,7 @@ export class Blum extends API {
         this
       );
       await this.fetch(
-        `https://game-domain.blum.codes/api/v1/tasks/${taskId}/start`,
+        `https://earn-domain.blum.codes/api/v1/tasks/${taskId}/start`,
         "POST",
         this.token
       )
@@ -202,7 +202,7 @@ export class Blum extends API {
       );
       const body = { keyword: answer };
       await this.fetch(
-        `https://game-domain.blum.codes/api/v1/tasks/${taskId}/validate`,
+        `https://earn-domain.blum.codes/api/v1/tasks/${taskId}/validate`,
         "POST",
         this.token,
         body
@@ -230,7 +230,7 @@ export class Blum extends API {
         this
       );
       await this.fetch(
-        "https://game-domain.blum.codes/api/v1/tasks/" + taskId + "/claim",
+        "https://earn-domain.blum.codes/api/v1/tasks/" + taskId + "/claim",
         "POST",
         this.token
       )
