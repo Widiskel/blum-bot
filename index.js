@@ -14,13 +14,13 @@ async function operation(acc, query, queryObj, proxy) {
     await blum.getUser(true);
     await blum.getBalance(true);
     await blum.checkIn();
-    await blum.getTasks(true);
     if (blum.balance.farming) {
       if (Helper.isFutureTime(blum.balance.farming.endTime)) {
         await blum.claim();
       }
     }
     await blum.mining();
+    await blum.getTasks(true);
     const uncompletableTaskIds = [
       "a90d8b81-0974-47f1-bb00-807463433bde",
       "03e4a46f-7588-4950-8289-f42787e3eca2",
