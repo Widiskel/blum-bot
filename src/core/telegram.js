@@ -28,7 +28,7 @@ export class Telegram {
   async onBoarding() {
     try {
       let ctx =
-        "Welcome to Fintopio Bot \nBy : Widiskel \n \nLets getting started.\n\nYour Session List:\n";
+        "Welcome to BLUM Bot \nBy : Widiskel \n \nLets getting started.\n\nYour Session List:\n";
       const accountList = Helper.getSession("accounts");
 
       if (accountList.length == 0) {
