@@ -144,6 +144,11 @@ export class Blum extends API {
         .then(async (data) => {
           this.tasks = [];
           for (const tasks of data) {
+            if (tasks.tasks) {
+              for (const item of tasks.tasks) {
+                this.tasks.push(...item.subTasks);
+              }
+            }
             if (tasks.subSections) {
               for (const subsection of tasks.subSections) {
                 this.tasks.push(...subsection.tasks);
