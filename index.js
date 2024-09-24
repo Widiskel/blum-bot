@@ -11,7 +11,7 @@ async function operation(acc, query, queryObj, proxy) {
     const blum = new Blum(acc, query, queryObj, proxy);
 
     await blum.login();
-    await blum.getUser(true);
+    // await blum.getUser(true);
     await blum.getBalance(true);
     await blum.checkIn();
     if (blum.balance.farming) {

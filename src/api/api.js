@@ -29,7 +29,7 @@ export class API {
     return headers;
   }
 
-  async fetch(endpoint, method, token, body = null) {
+  async fetch(endpoint, method, token, body = {}) {
     try {
       const url = `${endpoint}`;
       const headers = this.generateHeaders(token, endpoint);
