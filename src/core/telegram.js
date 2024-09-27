@@ -286,7 +286,6 @@ export class Telegram {
         })
       );
       logger.info(`Session ${this.session} - Webview Connected`);
-      // https://clicker.cowtopia.exchange/#tgWebAppData=query_id%3DAAGnbflTAgAAAKdt-VOyCnnH%26user%3D%7B%22id%22%3A5703822759%2C%22first_name%22%3A%22Widi%22%2C%22last_name%22%3A%22Saputro%22%2C%22username%22%3A%22Wskel%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D%26auth_date%3D1719831259%26hash%3De2647dd46bb9308103b20c27ba75fe8343295eed09f53d2bc927a59975d0f3c4&tgWebAppVersion=7.6&tgWebAppPlatform=tdesktop&tgWebAppThemeParams={"accent_text_color"%3A"%23168acd"%2C"bg_color"%3A"%23ffffff"%2C"button_color"%3A"%2340a7e3"%2C"button_text_color"%3A"%23ffffff"%2C"destructive_text_color"%3A"%23d14e4e"%2C"header_bg_color"%3A"%23ffffff"%2C"hint_color"%3A"%23999999"%2C"link_color"%3A"%23168acd"%2C"secondary_bg_color"%3A"%23f1f1f1"%2C"section_bg_color"%3A"%23ffffff"%2C"section_header_text_color"%3A"%23168acd"%2C"section_separator_color"%3A"%23e7e7e7"%2C"subtitle_text_color"%3A"%23999999"%2C"text_color"%3A"%23000000"}
       const authUrl = webView.url;
       // console.log(authUrl);
       return Helper.getTelegramQuery(authUrl, 3);
