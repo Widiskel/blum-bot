@@ -9,6 +9,7 @@ export class TASKANSWER {
     "350501e9-4fe4-4612-b899-b2daa11071fb": "CRYPTOSMART", //What are amms
     "b611352b-0d8c-44ec-8e0f-cd71b5922ca5": "BLUMERSSS", //Liquidity pools guide
     "92373c2b-2bf3-44c0-90f7-a7fd146c05c5": "HAPPYDOGS", //DOGS Airdrop
+    "d2715289-b487-43bc-bc21-18224f8f6bc3": "NODOXXING", //DOXXING Whats That
     // Add more task ids and their corresponding answers here
   };
 
