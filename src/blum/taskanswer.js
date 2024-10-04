@@ -10,6 +10,8 @@ export class TASKANSWER {
     "b611352b-0d8c-44ec-8e0f-cd71b5922ca5": "BLUMERSSS", //Liquidity pools guide
     "92373c2b-2bf3-44c0-90f7-a7fd146c05c5": "HAPPYDOGS", //DOGS Airdrop
     "d2715289-b487-43bc-bc21-18224f8f6bc3": "NODOXXING", //DOXXING Whats That
+    "c60919cd-0282-46fe-854a-1da0a01db9b2": "Blum - Big City Life", //Play Track
+    "7067a3db-d9c5-4268-ac19-c393743e8491": "WOWBLUM", //Pre Market
     // Add more task ids and their corresponding answers here
   };
 
