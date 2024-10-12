@@ -272,7 +272,7 @@ export class Blum extends API {
         this
       );
       await this.fetch(
-        "https://game-domain.blum.codes/api/v1/game/play",
+        "https://game-domain.blum.codes/api/v2/game/play",
         "POST",
         this.token
       )
@@ -318,7 +318,7 @@ export class Blum extends API {
     while (retryCount <= maxRetries) {
       try {
         await this.fetch(
-          "https://game-domain.blum.codes/api/v1/game/claim",
+          "https://game-domain.blum.codes/api/v2/game/claim",
           "POST",
           this.token,
           {
