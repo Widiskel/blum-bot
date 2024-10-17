@@ -22,7 +22,7 @@ export class API {
       "accept-encoding": "gzip, deflate",
       "accept-language": "en,en-US;q=0.9",
     };
-    if (this.token) {
+    if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
     // console.log(headers);
@@ -32,7 +32,7 @@ export class API {
   async fetch(endpoint, method, token, body = {}) {
     try {
       const url = `${endpoint}`;
-      const headers = this.generateHeaders(token, endpoint);
+      const headers = this.generateHeaders(token);
       const options = {
         cache: "default",
         credentials: "include",

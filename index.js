@@ -46,22 +46,22 @@ async function operation(acc, query, queryObj, proxy) {
       }
     }
 
-    // let err = 0;
-    // while (blum.balance.playPasses > 0) {
-    //   await blum.play().catch(() => {
-    //     err += 1;
-    //   });
-    //   if (err > 5) {
-    //     await Helper.delay(
-    //       3000,
-    //       acc,
-    //       "Failed to play game something wen't wrong",
-    //       blum
-    //     );
-    //     logger.error(err);
-    //     break;
-    //   }
-    // }
+    let err = 0;
+    while (blum.balance.playPasses > 0) {
+      await blum.play().catch(() => {
+        err += 1;
+      });
+      if (err > 5) {
+        await Helper.delay(
+          3000,
+          acc,
+          "Failed to play game something wen't wrong",
+          blum
+        );
+        logger.error(err);
+        break;
+      }
+    }
     await Helper.delay(
       60000 * 10,
       acc,

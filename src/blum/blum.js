@@ -6,6 +6,7 @@ export class Blum extends API {
     super(proxy);
     this.account = acc;
     this.query = query;
+    this.elig = false;
   }
 
   async login() {
@@ -304,6 +305,59 @@ export class Blum extends API {
         });
     });
   }
+
+  async gamePayloadGenerator(gameBody) {
+    try {
+      const zuydd = await this.fetch(
+        "https://raw.githubusercontent.com/zuydd/database/main/blum.json",
+        "GET"
+      );
+
+      const payloadServer = JSON.parse(zuydd).payloadServer.find(
+        (item) => item.status === 1
+      );
+
+      if (!payloadServer) {
+        throw new Error("No payload server found with status 1");
+      }
+
+      const requestBody = {
+        game_id: gameBody.gameId,
+        points: gameBody.points,
+        dogs: this.elig ? Helper.random(15, 20) * 5 : 0,
+      };
+
+      const res = await this.fetch(
+        `https://${payloadServer.id}.vercel.app/api/blum`,
+        "POST",
+        undefined,
+        requestBody
+      );
+
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async checkDogsElig() {
+    await Helper.delay(
+      500,
+      this.account,
+      `Checking if user eligible for dogs`,
+      this
+    );
+
+    try {
+      const res = await this.fetch(
+        "https://game-domain.blum.codes/api/v2/game/eligibility/dogs_drop",
+        "GET",
+        this.token
+      );
+      this.elig = res.eligible;
+    } catch (err) {}
+  }
+
   async claimGame(gameId, score) {
     await Helper.delay(
       500,
@@ -321,10 +375,10 @@ export class Blum extends API {
           "https://game-domain.blum.codes/api/v2/game/claim",
           "POST",
           this.token,
-          {
+          await this.gamePayloadGenerator({
             gameId: gameId,
             points: score,
-          }
+          })
         );
         await Helper.delay(
           10000,
