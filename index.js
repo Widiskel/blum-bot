@@ -12,6 +12,7 @@ async function operation(acc, query, queryObj, proxy) {
 
     await blum.login();
     // await blum.getUser(true);
+    await blum.checkDogsElig();
     await blum.getBalance(true);
     await blum.checkIn();
     if (blum.balance.farming) {

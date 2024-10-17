@@ -355,6 +355,14 @@ export class Blum extends API {
         this.token
       );
       this.elig = res.eligible;
+      await Helper.delay(
+        500,
+        this.account,
+        `You are ${
+          res.eligible == true ? "Eligible" : "Not Eligible"
+        } for dogs airdrop`,
+        this
+      );
     } catch (err) {}
   }
 
