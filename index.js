@@ -1,5 +1,6 @@
 import { Blum } from "./src/blum/blum.js";
 import { TASKANSWER } from "./src/blum/taskanswer.js";
+import { Config } from "./src/config/config.js";
 import { proxyList } from "./src/config/proxy_list.js";
 import { Telegram } from "./src/core/telegram.js";
 import { Helper } from "./src/utils/helper.js";
@@ -12,7 +13,6 @@ async function operation(acc, query, queryObj, proxy) {
 
     await blum.login();
     // await blum.getUser(true);
-    await blum.checkDogsElig();
     await blum.getBalance(true);
     await blum.checkIn();
     if (blum.balance.farming) {
@@ -46,23 +46,25 @@ async function operation(acc, query, queryObj, proxy) {
         await blum.completeTask(task.id);
       }
     }
+    await blum.checkDogsElig();
 
     let err = 0;
-    while (blum.balance.playPasses > 0) {
-      await blum.play().catch(() => {
-        err += 1;
-      });
-      if (err > 5) {
-        await Helper.delay(
-          3000,
-          acc,
-          "Failed to play game something wen't wrong",
-          blum
-        );
-        logger.error(err);
-        break;
+    if (Config.PLAYGAME ?? true)
+      while (blum.balance.playPasses > 0) {
+        await blum.play().catch(() => {
+          err += 1;
+        });
+        if (err > 5) {
+          await Helper.delay(
+            3000,
+            acc,
+            "Failed to play game something wen't wrong",
+            blum
+          );
+          logger.error(err);
+          break;
+        }
       }
-    }
     await Helper.delay(
       60000 * 10,
       acc,
