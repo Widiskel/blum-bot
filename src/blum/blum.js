@@ -324,17 +324,32 @@ export class Blum extends API {
       const requestBody = {
         game_id: gameBody.gameId,
         points: gameBody.points,
-        dogs: this.elig ? Helper.random(15, 20) * 5 : 0,
       };
 
       const res = await this.fetch(
-        `https://${payloadServer.id}.vercel.app/api/blum`,
+        `https://${payloadServer.id}.vercel.app/api/`,
         "POST",
         undefined,
         requestBody
       );
 
       return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async getTaskAnswer() {
+    try {
+      const zuydd = await this.fetch(
+        "https://raw.githubusercontent.com/zuydd/database/main/blum.json",
+        "GET"
+      );
+
+      this.TASKANSWER = JSON.parse(zuydd).tasks;
+
+      if (!this.TASKANSWER) {
+        throw new Error("No Task ANswer FOund");
+      }
     } catch (err) {
       throw err;
     }

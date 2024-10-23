@@ -1,5 +1,4 @@
 import { Blum } from "./src/blum/blum.js";
-import { TASKANSWER } from "./src/blum/taskanswer.js";
 import { Config } from "./src/config/config.js";
 import { proxyList } from "./src/config/proxy_list.js";
 import { Telegram } from "./src/core/telegram.js";
@@ -21,7 +20,9 @@ async function operation(acc, query, queryObj, proxy) {
       }
     }
     await blum.mining();
+    await blum.getTaskAnswer();
     await blum.getTasks(true);
+
     const uncompletableTaskIds = [
       "a90d8b81-0974-47f1-bb00-807463433bde",
       "03e4a46f-7588-4950-8289-f42787e3eca2",
@@ -38,33 +39,31 @@ async function operation(acc, query, queryObj, proxy) {
       if (task.status === "NOT_STARTED") {
         await blum.startAndCompleteTask(task.id);
       } else if (task.status === "READY_FOR_VERIFY") {
-        const answer = TASKANSWER.getAnswer(task.id);
-        if (answer) {
-          await blum.validateAndCompleteTask(task.id, answer);
+        const answer = blum.TASKANSWER.find((item) => item.id == task.id);
+        if (answer != -1 && answer != undefined) {
+          await blum.validateAndCompleteTask(task.id, answer.answer);
         }
       } else {
         await blum.completeTask(task.id);
       }
     }
-    await blum.checkDogsElig();
-
     let err = 0;
-    if (Config.PLAYGAME ?? true)
-      while (blum.balance.playPasses > 0) {
-        await blum.play().catch(() => {
-          err += 1;
-        });
-        if (err > 5) {
-          await Helper.delay(
-            3000,
-            acc,
-            "Failed to play game something wen't wrong",
-            blum
-          );
-          logger.error(err);
-          break;
-        }
-      }
+    // if (Config.PLAYGAME ?? true)
+    //   while (blum.balance.playPasses > 0) {
+    //     await blum.play().catch(() => {
+    //       err += 1;
+    //     });
+    //     if (err > 5) {
+    //       await Helper.delay(
+    //         3000,
+    //         acc,
+    //         "Failed to play game something wen't wrong",
+    //         blum
+    //       );
+    //       logger.error(err);
+    //       break;
+    //     }
+    //   }
     await Helper.delay(
       60000 * 10,
       acc,
